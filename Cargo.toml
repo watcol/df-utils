@@ -18,3 +18,7 @@ include = [
 
 [dependencies]
 peg = "0.7"
+
+[[bin]]
+name = "jp"
+path = "src/bin/jp.rs"

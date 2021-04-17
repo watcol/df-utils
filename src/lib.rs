@@ -1,4 +1,7 @@
 //! Simple CLI Parser for Data Formats
+mod json;
+pub use json::JsonParser;
+
 use std::collections::HashMap;
 
 /// Represents the Parsed value.
