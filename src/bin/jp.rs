@@ -5,6 +5,9 @@ use std::io::{stdin, Read};
 fn main() {
     let mut s = String::new();
     stdin().read_to_string(&mut s).expect("Failed to Read stdin");
-    let value = JsonParser::parse(&s).expect("Failed to parse JSON");
+    let value = JsonParser::parse(&s).unwrap_or_else(|e| {
+        println!("{}", e);
+        Value::Null
+    });
     println!("{:?}", value);
 }
