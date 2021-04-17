@@ -23,13 +23,13 @@ peg::parser!{grammar json5_parser() for str {
         / null()
 
     rule object() -> Value
-        = "{" _ m:(member() ** ",") _ "}" { Value::Map(HashMap::from_iter(m)) }
+        = "{" _ m:(member() ** ",") _ ","? _ "}" { Value::Map(HashMap::from_iter(m)) }
 
     rule member() -> (String, Value)
         = _ s:string_() _ ":" e:elem() { (s, e) }
 
     rule array() -> Value
-        = "[" _ e:(elem() ** ",") _ "]" { Value::Array(e) }
+        = "[" _ e:(elem() ** ",") _ ","? _ "]" { Value::Array(e) }
 
     rule bool() -> Value
         = "true" { Value::Boolean(true) }
