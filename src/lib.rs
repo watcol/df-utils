@@ -1,5 +1,7 @@
 //! Simple CLI Parser for Data Formats
 mod json;
+mod print;
+
 pub use json::JsonParser;
 
 use std::collections::HashMap;
@@ -14,6 +16,12 @@ pub enum Value {
     String(String),
     Array(Vec<Value>),
     Map(HashMap<String, Value>)
+}
+
+impl Value {
+    pub fn print<W: std::io::Write>(&self, buf: &mut W) -> std::io::Result<()> {
+        print::print(buf, self)
+    }
 }
 
 /// The unified interface for parsing data format.

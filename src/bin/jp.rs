@@ -1,6 +1,6 @@
 //! JSON(JSON5) Parser
 use df_utils::{Value, Parser, JsonParser};
-use std::io::{stdin, Read};
+use std::io::{stdin, stdout, Read};
 
 fn main() {
     let mut s = String::new();
@@ -9,5 +9,5 @@ fn main() {
         println!("{}", e);
         Value::Null
     });
-    println!("{:?}", value);
+    value.print(&mut stdout()).expect("Failed to write to stdout");
 }
