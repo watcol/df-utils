@@ -1,15 +1,15 @@
-# JSON Cat
+# Data format Utils
 ![status](https://img.shields.io/badge/status-WIP-red)
-[![crates.io](https://img.shields.io/crates/v/jcat)](https://crates.io/crates/jcat)
-[![Downloads](https://img.shields.io/crates/d/jcat)](https://crates.io/crates/jcat)
-[![Downloads (latest)](https://img.shields.io/crates/dv/jcat)](https://crates.io/crates/jcat)
-[![License](https://img.shields.io/crates/l/jcat)](https://github.com/watcol/jcat/blob/main/LICENSE)
+[![crates.io](https://img.shields.io/crates/v/df-utils)](https://crates.io/crates/df-utils)
+[![Downloads](https://img.shields.io/crates/d/df-utils)](https://crates.io/crates/df-utils)
+[![Downloads (latest)](https://img.shields.io/crates/dv/df-utils)](https://crates.io/crates/df-utils)
+[![License](https://img.shields.io/crates/l/df-utils)](https://github.com/watcol/df-utils/blob/main/LICENSE)
 
-Simple CLI JSON(JSON5) Parser
+Simple CLI Parser for Data Formats
 
 ## Installation
 ```shell
-$ cargo install jcat
+$ cargo install df-utils
 ```
 
 ## Author
@@ -18,4 +18,4 @@ $ cargo install jcat
 ## License
 This program is licensed under the MIT license.
 
-See [LICENSE](https://github.com/watcol/jcat/blob/main/LICENSE) for details.
+See [LICENSE](https://github.com/watcol/df-utils/blob/main/LICENSE) for details.
