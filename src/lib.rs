@@ -8,7 +8,7 @@ use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub enum Value {
     Null,
-    Int(i64),
+    Int(i128),
     Float(f64),
     Boolean(bool),
     String(String),
