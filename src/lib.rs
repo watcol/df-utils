@@ -3,6 +3,7 @@ mod json;
 mod print;
 
 pub use json::JsonParser;
+pub use print::PrintConfig;
 
 use std::collections::HashMap;
 
@@ -19,8 +20,8 @@ pub enum Value {
 }
 
 impl Value {
-    pub fn print<W: std::io::Write>(&self, buf: &mut W) -> std::io::Result<()> {
-        print::print(buf, self)
+    pub fn print<W: std::io::Write>(&self, buf: &mut W, config: &PrintConfig) -> std::io::Result<()> {
+        print::print(buf, self, config)
     }
 }
 
