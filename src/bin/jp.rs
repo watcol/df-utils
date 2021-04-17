@@ -7,7 +7,7 @@ fn main() {
     stdin().read_to_string(&mut s).expect("Failed to Read stdin");
     let value = Json5Parser::parse(&s).unwrap_or_else(|e| {
         println!("{}", e);
-        Value::Null
+        std::process::exit(1);
     });
     value.print(&mut stdout(), &PrintConfig::new()).expect("Failed to write to stdout");
 }
