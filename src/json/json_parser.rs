@@ -56,28 +56,38 @@ peg::parser!{grammar json_parser() for str {
         / "n"  { '\n' }
         / "r"  { '\r' }
         / "t"  { '\t' }
-        / "u" h:hex() {? char::try_from(h).or(Err("hex")) }
-
-    rule hex() -> u32
-        = h:$(['0'..='9' | 'a'..='f' | 'A'..='F']*<4,4>) {? h.parse().or(Err("hex")) }
+        / "u" h:$(hex()*<4>) {? char::try_from(u32::from_str_radix(h, 16).or(Err("hexchar"))?).or(Err("escape")) }
 
     rule number() -> Value
-        = i:signed() d:$(fraction() exponent()) {?
-            if d.is_empty() {
-                i.parse().map(Value::Int).or(Err("int"))
-            } else {
-                [i, d].concat().parse().map(Value::Float).or(Err("float"))
+        = v:unsigned() { v }
+        / "-" v:unsigned() {
+            match v {
+                Value::Int(i) => Value::Int(-i),
+                Value::Float(f) => Value::Float(-f),
+                _ => unreachable!()
             }
         }
 
+    rule unsigned() -> Value
+        = i:digits() d:$(fraction() exponent()) {?
+            Ok(if d.is_empty() {
+                Value::Int(i.parse().or(Err("int"))?)
+            } else {
+                Value::Float([i, d].concat().parse().or(Err("float"))?)
+            })
+        }
+
     rule exponent() -> &'input str
-        = $(("e"/"E") signed() / "")
+        = $(("e"/"E") ("+"/"-"/"") digits() / "")
 
     rule fraction() -> &'input str
         = $("." ['0'..='9']+ / "")
 
     rule signed() -> &'input str
         = $(("+" / "-" / "") digits())
+
+    rule hex() -> &'input str
+        = $(['0'..='9' | 'a'..='f' | 'A'..='F'])
 
     rule digits() -> &'input str
         = $("0" / ['1'..='9']['0'..='9']*)
