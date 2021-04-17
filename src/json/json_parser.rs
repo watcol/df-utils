@@ -8,7 +8,7 @@ peg::parser!{grammar json_parser() for str {
     pub rule json() -> Value
         = elem()
 
-    rule _ = " " / "\n" / "\r" / "\t" / ""
+    rule _ = [^' ' | '\n' | '\r' | '\t']*
 
     rule elem() -> Value
         = _ v:value() _ { v }
