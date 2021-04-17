@@ -13,8 +13,17 @@ peg::parser!{grammar json_parser() for str {
         = _ v:value() _ { v }
 
     rule value() -> Value
-        = number()
-        / string()
+        = string()
+        / number()
+        / bool()
+        / null()
+
+    rule bool() -> Value
+        = "true" { Value::Boolean(true) }
+        / "false" { Value::Boolean(false) }
+
+    rule null() -> Value
+        = "null" { Value::Null }
 
     rule string() -> Value
         = "\"" s:character()* "\"" { Value::String(String::from_iter(s)) }
