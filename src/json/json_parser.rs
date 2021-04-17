@@ -1,4 +1,6 @@
 //! JSON Parser
+use std::convert::TryFrom;
+use std::iter::FromIterator;
 use crate::{Value, Parser};
 
 peg::parser!{grammar json_parser() for str {
@@ -12,6 +14,28 @@ peg::parser!{grammar json_parser() for str {
 
     rule value() -> Value
         = number()
+        / string()
+
+    rule string() -> Value
+        = "\"" s:character()* "\"" { Value::String(String::from_iter(s)) }
+
+    rule character() -> char
+        = c:$([^ '"' | '\\']) { c.chars().next().unwrap() }
+        / "\\" e:escape() { e }
+
+    rule escape() -> char
+        = "\"" { '"' }
+        / "\\" { '\\' }
+        / "/"  { '/' }
+        / "b"  { '\x08' }
+        / "f"  { '\x0c' }
+        / "n"  { '\n' }
+        / "r"  { '\r' }
+        / "t"  { '\t' }
+        / "u" h:hex() {? char::try_from(h).or(Err("hex")) }
+
+    rule hex() -> u32
+        = h:$(['0'..='9' | 'a'..='f' | 'A'..='F']*<4,4>) {? h.parse().or(Err("hex")) }
 
     rule number() -> Value
         = i:signed() d:$(fraction() exponent()) {?
