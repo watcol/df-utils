@@ -1,6 +1,7 @@
 //! JSON Parser
 use std::convert::TryFrom;
 use std::iter::FromIterator;
+use std::collections::HashMap;
 use crate::{Value, Parser};
 
 peg::parser!{grammar json_parser() for str {
@@ -13,10 +14,21 @@ peg::parser!{grammar json_parser() for str {
         = _ v:value() _ { v }
 
     rule value() -> Value
-        = string()
+        = object()
+        / array()
+        / string()
         / number()
         / bool()
         / null()
+
+    rule object() -> Value
+        = "{" _ m:(member() ** ",") _ "}" { Value::Map(HashMap::from_iter(m)) }
+
+    rule member() -> (String, Value)
+        = _ s:string_() _ ":" e:elem() { (s, e) }
+
+    rule array() -> Value
+        = "[" _ e:(elem() ** ",") _ "]" { Value::Array(e) }
 
     rule bool() -> Value
         = "true" { Value::Boolean(true) }
@@ -26,7 +38,10 @@ peg::parser!{grammar json_parser() for str {
         = "null" { Value::Null }
 
     rule string() -> Value
-        = "\"" s:character()* "\"" { Value::String(String::from_iter(s)) }
+        = s:string_() { Value::String(s) }
+
+    rule string_() -> String
+        = "\"" s:character()* "\"" { String::from_iter(s) }
 
     rule character() -> char
         = c:$([^ '"' | '\\']) { c.chars().next().unwrap() }
