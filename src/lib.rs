@@ -7,10 +7,11 @@ use std::collections::HashMap;
 /// Represents the Parsed value.
 #[derive(Clone, Debug)]
 pub enum Value {
-    String(String),
+    Null,
     Int(i64),
     Float(f64),
     Boolean(bool),
+    String(String),
     Array(Vec<Value>),
     Map(HashMap<String, Value>)
 }
