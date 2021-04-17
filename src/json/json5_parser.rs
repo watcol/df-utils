@@ -8,8 +8,11 @@ peg::parser!{grammar json5_parser() for str {
     pub rule json5() -> Value
         = elem()
 
-    rule _ = [c if c.is_whitespace() || c == '\u{feff}']?
+    rule _ = whitespace()*
     rule __ = "\n" / "\r" / "\u{2028}" / "\u{2029}" / ""
+    rule whitespace() = "//" [^'\n' | '\r' | '\u{2028}' | '\u{2029}']* __
+           / "/*" [^'*']* "*/"
+           / [c if c.is_whitespace() || c == '\u{feff}']
 
     rule elem() -> Value
         = _ v:value() _ { v }
