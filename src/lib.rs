@@ -2,7 +2,7 @@
 mod json;
 mod print;
 
-pub use json::JsonParser;
+pub use json::{JsonParser, Json5Parser};
 pub use print::PrintConfig;
 
 use std::collections::HashMap;
