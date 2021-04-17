@@ -1,4 +1,5 @@
 //! JSON5 Parser
+use unicode_categories::UnicodeCategories;
 use std::convert::TryFrom;
 use std::iter::FromIterator;
 use std::collections::HashMap;
@@ -29,7 +30,29 @@ peg::parser!{grammar json5_parser() for str {
         = "{" _ m:(member() ** ",") _ ","? _ "}" { Value::Map(HashMap::from_iter(m)) }
 
     rule member() -> (String, Value)
-        = _ s:string_() _ ":" e:elem() { (s, e) }
+        = _ s:(ident() / string_()) _ ":" e:elem() { (s, e) }
+
+    rule ident() -> String
+        = s:ident_start() p:ident_part()* { let mut string = String::from_iter(p); string.insert(0, s); string }
+
+    rule ident_start() -> char
+        = c:$([c if c.is_letter_uppercase() ||
+                    c.is_letter_lowercase() ||
+                    c.is_letter_titlecase() ||
+                    c.is_letter_modifier()  ||
+                    c.is_letter_other()     ||
+                    c == '$' || c == '_'
+              ]) { c.chars().next().unwrap() }
+        / "u" h:$(hex()*<4>) {? char::try_from(u32::from_str_radix(h, 16).or(Err("hexchar"))?).or(Err("escape")) }
+
+    rule ident_part() -> char
+        = ident_start()
+        / c:$([c if c.is_mark_nonspacing()        ||
+                    c.is_mark_spacing_combining() ||
+                    c.is_number_decimal_digit()   ||
+                    c.is_punctuation_connector()  ||
+                    c == '\u{200c}' || c == '\u{200d}'
+              ]) { c.chars().next().unwrap() }
 
     rule array() -> Value
         = "[" _ e:(elem() ** ",") _ ","? _ "]" { Value::Array(e) }
