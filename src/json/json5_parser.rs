@@ -8,7 +8,8 @@ peg::parser!{grammar json5_parser() for str {
     pub rule json5() -> Value
         = elem()
 
-    rule _ = " " / "\n" / "\r" / "\t" / ""
+    rule _ = [c if c.is_whitespace() || c == '\u{feff}']?
+    rule __ = "\n" / "\r" / "\u{2028}" / "\u{2029}" / ""
 
     rule elem() -> Value
         = _ v:value() _ { v }
@@ -41,21 +42,35 @@ peg::parser!{grammar json5_parser() for str {
         = s:string_() { Value::String(s) }
 
     rule string_() -> String
-        = "\"" s:character()* "\"" { String::from_iter(s) }
+        = "\"" s:double_char()* "\"" { String::from_iter(s.into_iter().filter_map(|c| c)) }
+        / "'" s:single_char()* "'" { String::from_iter(s.into_iter().filter_map(|c| c)) }
 
-    rule character() -> char
-        = c:$([^ '"' | '\\']) { c.chars().next().unwrap() }
-        / "\\" e:escape() { e }
+    rule double_char() -> Option<char>
+        = c:$([^ '"' | '\\' | '\n' | '\r']) { Some(c.chars().next().unwrap()) }
+        / "\\" c:(
+            e:escape() { Some(e) }
+            / __ { None }
+        ) { c }
+
+    rule single_char() -> Option<char>
+        = c:$([^ '\'' | '\\' | '\n' | '\r']) { Some(c.chars().next().unwrap()) }
+        / "\\" c:(
+            e:escape() { Some(e) }
+            / __ { None }
+        ) { c }
 
     rule escape() -> char
         = "\"" { '"' }
+        / "\'" { '\'' }
         / "\\" { '\\' }
         / "/"  { '/' }
         / "b"  { '\x08' }
         / "f"  { '\x0c' }
+        / "v"  { '\x0b' }
         / "n"  { '\n' }
         / "r"  { '\r' }
         / "t"  { '\t' }
+        / "x" h:$(hex()*<2>) {? Ok(u8::from_str_radix(h, 16).or(Err("hexchar"))? as char) }
         / "u" h:$(hex()*<4>) {? char::try_from(u32::from_str_radix(h, 16).or(Err("hexchar"))?).or(Err("escape")) }
 
     rule number() -> Value
