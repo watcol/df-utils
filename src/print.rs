@@ -57,6 +57,7 @@ fn print_inner<W: io::Write>(
         Value::Int(i) => writeln!(buf, "{}{}{}", loc, config.equal, i)?,
         Value::Float(f) => writeln!(buf, "{}{}{}", loc, config.equal, f)?,
         Value::String(s) => writeln!(buf, "{}{}{:?}", loc, config.equal, s)?,
+        Value::Array(vs) if vs.is_empty() => writeln!(buf, "{}{}[]", loc, config.equal)?,
         Value::Array(vs) => {
             for (i, v) in vs.iter().enumerate() {
                 print_inner(
@@ -67,6 +68,7 @@ fn print_inner<W: io::Write>(
                 )?
             }
         }
+        Value::Map(vs) if vs.is_empty() => writeln!(buf, "{}{}{{}}", loc, config.equal)?,
         Value::Map(vs) => {
             for (k, v) in vs.iter() {
                 print_inner(buf, v, config, &[loc, &config.delimiter, &k].concat())?
@@ -130,6 +132,8 @@ peg::parser! {grammar printer() for str {
         / "NaN"      { Value::Float(f64::NAN) }
         / "inf"      { Value::Float(f64::INFINITY) }
         / "-inf"     { Value::Float(f64::NEG_INFINITY) }
+        / "[]"       { Value::Array(Vec::new()) }
+        / "{}"       { Value::Map(HashMap::new()) }
         / n:number() { n }
         / s:string() { Value::String(s) }
 
