@@ -1,7 +1,7 @@
 /// Minified JSON Generator.
 pub struct MinJsonGenerator;
 
-use crate::{Value, Generator};
+use crate::{Generator, Value};
 use std::io::{self, Write};
 
 impl Generator for MinJsonGenerator {
@@ -22,7 +22,9 @@ fn inner_generate<W: Write>(buf: &mut W, value: &Value) -> io::Result<()> {
         Value::Array(vs) => {
             write!(buf, "[")?;
             for (i, v) in vs.iter().enumerate() {
-                if i != 0 { write!(buf, ",")?; }
+                if i != 0 {
+                    write!(buf, ",")?;
+                }
                 inner_generate(buf, v)?;
             }
             write!(buf, "]")?;
@@ -30,7 +32,9 @@ fn inner_generate<W: Write>(buf: &mut W, value: &Value) -> io::Result<()> {
         Value::Map(m) => {
             write!(buf, "{{")?;
             for (i, (k, v)) in m.iter().enumerate() {
-                if i != 0 { write!(buf, ",")?; }
+                if i != 0 {
+                    write!(buf, ",")?;
+                }
                 string(buf, k)?;
                 write!(buf, ":")?;
                 inner_generate(buf, v)?;

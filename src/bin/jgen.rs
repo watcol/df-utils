@@ -20,7 +20,12 @@ struct Opts {
     input: Option<PathBuf>,
     #[clap(short = 'o', long = "output", about = "The output JSON file.")]
     output: Option<PathBuf>,
-    #[clap(short = 'r', long = "root", about = "The root indicator.", default_value = "$")]
+    #[clap(
+        short = 'r',
+        long = "root",
+        about = "The root indicator.",
+        default_value = "$"
+    )]
     root: String,
     #[clap(
         short = 'd',
@@ -29,7 +34,12 @@ struct Opts {
         default_value = "."
     )]
     delimiter: String,
-    #[clap(short = 'e', long = "equal", about = "The equal symbol.", default_value = " = ")]
+    #[clap(
+        short = 'e',
+        long = "equal",
+        about = "The equal symbol.",
+        default_value = " = "
+    )]
     equal: String,
     #[clap(short = 'm', long = "minify", about = "Minify JSON output.")]
     minify: bool,

@@ -1,13 +1,13 @@
 //! IO Control
+use std::fs::File;
 use std::io;
 use std::path::PathBuf;
-use std::fs::File;
 
 /// Unified input stream
 #[derive(Debug)]
 pub enum Input {
     Stdin(io::Stdin),
-    File(File)
+    File(File),
 }
 
 impl io::Read for Input {
@@ -33,7 +33,7 @@ impl Input {
 #[derive(Debug)]
 pub enum Output {
     Stdout(io::Stdout),
-    File(File)
+    File(File),
 }
 
 impl io::Write for Output {
@@ -47,7 +47,7 @@ impl io::Write for Output {
     fn flush(&mut self) -> io::Result<()> {
         match self {
             Self::Stdout(s) => s.flush(),
-            Self::File(f) => f.flush()
+            Self::File(f) => f.flush(),
         }
     }
 }

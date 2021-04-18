@@ -1,7 +1,7 @@
 /// Formatted JSON Generator.
 pub struct PrettyJsonGenerator;
 
-use crate::{Value, Generator};
+use crate::{Generator, Value};
 use std::io::{self, Write};
 
 impl Generator for PrettyJsonGenerator {
@@ -23,22 +23,26 @@ fn inner_generate<W: Write>(buf: &mut W, value: &Value, ind: usize) -> io::Resul
         Value::Array(vs) => {
             writeln!(buf, "[")?;
             for (i, v) in vs.iter().enumerate() {
-                if i != 0 { writeln!(buf, ",")?; }
+                if i != 0 {
+                    writeln!(buf, ",")?;
+                }
                 write!(buf, "{}", "    ".repeat(ind))?;
-                inner_generate(buf, v, ind+1)?;
+                inner_generate(buf, v, ind + 1)?;
             }
-            write!(buf, "\n{}]", "    ".repeat(ind-1))?;
+            write!(buf, "\n{}]", "    ".repeat(ind - 1))?;
         }
         Value::Map(m) => {
             writeln!(buf, "{{")?;
             for (i, (k, v)) in m.iter().enumerate() {
-                if i != 0 { writeln!(buf, ",")?; }
+                if i != 0 {
+                    writeln!(buf, ",")?;
+                }
                 write!(buf, "{}", "    ".repeat(ind))?;
                 string(buf, k)?;
                 write!(buf, ": ")?;
-                inner_generate(buf, v, ind+1)?;
+                inner_generate(buf, v, ind + 1)?;
             }
-            write!(buf, "\n{}}}", "    ".repeat(ind-1))?;
+            write!(buf, "\n{}}}", "    ".repeat(ind - 1))?;
         }
     }
     Ok(())

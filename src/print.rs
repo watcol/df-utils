@@ -1,7 +1,7 @@
 //! Print Value
 use crate::Value;
-use std::io;
 use std::collections::HashMap;
+use std::io;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PrintConfig {

@@ -12,4 +12,3 @@ pub trait Parser {
     type Err;
     fn parse(s: &str) -> Result<Value, Self::Err>;
 }
-

@@ -1,11 +1,11 @@
 //! JSON5 Parser
-use unicode_categories::UnicodeCategories;
+use crate::{Parser, Value};
+use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::iter::FromIterator;
-use std::collections::HashMap;
-use crate::{Value, Parser};
+use unicode_categories::UnicodeCategories;
 
-peg::parser!{grammar json5_parser() for str {
+peg::parser! {grammar json5_parser() for str {
     pub rule json5() -> Value
         = elem()
 

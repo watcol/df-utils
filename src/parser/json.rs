@@ -1,10 +1,10 @@
 //! JSON Parser
+use crate::{Parser, Value};
+use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::iter::FromIterator;
-use std::collections::HashMap;
-use crate::{Value, Parser};
 
-peg::parser!{grammar json_parser() for str {
+peg::parser! {grammar json_parser() for str {
     pub rule json() -> Value
         = elem()
 

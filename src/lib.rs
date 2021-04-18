@@ -7,7 +7,7 @@ mod print;
 pub mod io;
 
 pub use generator::{Generator, MinJsonGenerator, PrettyJsonGenerator};
-pub use parser::{JsonParser, Json5Parser, Parser};
+pub use parser::{Json5Parser, JsonParser, Parser};
 pub use print::PrintConfig;
 
 use std::collections::HashMap;
@@ -21,15 +21,22 @@ pub enum Value {
     Boolean(bool),
     String(String),
     Array(Vec<Value>),
-    Map(HashMap<String, Value>)
+    Map(HashMap<String, Value>),
 }
 
 impl Value {
-    pub fn print<W: std::io::Write>(&self, buf: &mut W, config: &PrintConfig) -> std::io::Result<()> {
+    pub fn print<W: std::io::Write>(
+        &self,
+        buf: &mut W,
+        config: &PrintConfig,
+    ) -> std::io::Result<()> {
         print::print(buf, self, config)
     }
 
-    pub fn parse(s: &str, config: &PrintConfig) -> Result<Self, peg::error::ParseError<peg::str::LineCol>> {
+    pub fn parse(
+        s: &str,
+        config: &PrintConfig,
+    ) -> Result<Self, peg::error::ParseError<peg::str::LineCol>> {
         print::deprint(s, config)
     }
 }
