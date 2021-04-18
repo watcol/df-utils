@@ -19,7 +19,3 @@ include = [
 [dependencies]
 peg = "0.7"
 unicode_categories = "0.1"
-
-[[bin]]
-name = "jprs"
-path = "src/bin/jprs.rs"
