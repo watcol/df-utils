@@ -2,7 +2,8 @@
 use clap::Clap;
 use df_utils::{
     io::{Input, Output},
-    Json5Parser, JsonParser, Parser, PrintConfig,
+    parser::{Json5Parser, JsonParser},
+    Generator, LineGenerator, Parser,
 };
 use std::io::Read;
 use std::path::PathBuf;
@@ -61,11 +62,9 @@ fn main() -> std::io::Result<()> {
         std::process::exit(1);
     });
 
-    value.print(
-        &mut Output::from_path(opts.output)?,
-        PrintConfig::new()
-            .root(opts.root)
-            .delimiter(opts.delimiter)
-            .equal(opts.equal),
-    )
+    LineGenerator::new()
+        .root(opts.root)
+        .delimiter(opts.delimiter)
+        .equal(opts.equal)
+        .generate(&mut Output::from_path(opts.output)?, &value)
 }

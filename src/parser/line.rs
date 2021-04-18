@@ -1,16 +1,16 @@
-//! Print Value
-use crate::Value;
+//! Line Parser
+
+use crate::{Value, Parser};
 use std::collections::HashMap;
-use std::io;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct PrintConfig {
+pub struct LineParser {
     root: String,
     delimiter: String,
     equal: String,
 }
 
-impl Default for PrintConfig {
+impl Default for LineParser {
     fn default() -> Self {
         Self {
             root: "$".to_string(),
@@ -20,7 +20,7 @@ impl Default for PrintConfig {
     }
 }
 
-impl PrintConfig {
+impl LineParser {
     pub fn new() -> Self {
         Self::default()
     }
@@ -41,43 +41,6 @@ impl PrintConfig {
     }
 }
 
-pub fn print<W: io::Write>(buf: &mut W, value: &Value, config: &PrintConfig) -> io::Result<()> {
-    print_inner(buf, value, config, &config.root)
-}
-
-fn print_inner<W: io::Write>(
-    buf: &mut W,
-    value: &Value,
-    config: &PrintConfig,
-    loc: &str,
-) -> io::Result<()> {
-    match value {
-        Value::Null => writeln!(buf, "{}{}null", loc, config.equal)?,
-        Value::Boolean(b) => writeln!(buf, "{}{}{}", loc, config.equal, b)?,
-        Value::Int(i) => writeln!(buf, "{}{}{}", loc, config.equal, i)?,
-        Value::Float(f) => writeln!(buf, "{}{}{}", loc, config.equal, f)?,
-        Value::String(s) => writeln!(buf, "{}{}{:?}", loc, config.equal, s)?,
-        Value::Array(vs) if vs.is_empty() => writeln!(buf, "{}{}[]", loc, config.equal)?,
-        Value::Array(vs) => {
-            for (i, v) in vs.iter().enumerate() {
-                print_inner(
-                    buf,
-                    v,
-                    config,
-                    &[loc, &config.delimiter, &i.to_string()].concat(),
-                )?
-            }
-        }
-        Value::Map(vs) if vs.is_empty() => writeln!(buf, "{}{}{{}}", loc, config.equal)?,
-        Value::Map(vs) => {
-            for (k, v) in vs.iter() {
-                print_inner(buf, v, config, &[loc, &config.delimiter, &k].concat())?
-            }
-        }
-    }
-    Ok(())
-}
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum Path {
     Array(usize),
@@ -95,10 +58,10 @@ peg::parser! {grammar printer() for str {
     use std::iter::FromIterator;
     use std::convert::TryFrom;
 
-    pub rule printer(config: &PrintConfig) -> Vec<Item>
+    pub rule printer(config: &LineParser) -> Vec<Item>
         = i:(item(config)**"\n") "\n"? { i }
 
-    rule item(config: &PrintConfig) -> Item
+    rule item(config: &LineParser) -> Item
         = root(config)
           delim(config)
           path:(path(config)**delim(config))
@@ -106,23 +69,23 @@ peg::parser! {grammar printer() for str {
           value:value()
           { Item { path, value } }
 
-    rule root(config: &PrintConfig)
+    rule root(config: &LineParser)
         = ##parse_string_literal(&config.root)
 
-    rule delim(config: &PrintConfig)
+    rule delim(config: &LineParser)
         = ##parse_string_literal(&config.delimiter)
 
-    rule equal(config: &PrintConfig)
+    rule equal(config: &LineParser)
         = ##parse_string_literal(&config.equal)
 
-    rule path(config: &PrintConfig) -> Path
+    rule path(config: &LineParser) -> Path
         = i:array() { Path::Array(i) }
         / s:map(config) { Path::Map(s) }
 
     rule array() -> usize
         = i:$(['1'..='9']['0'..='9']* / "0") {? i.parse().or(Err("array")) }
 
-    rule map(config: &PrintConfig) -> String
+    rule map(config: &LineParser) -> String
         = s:$((!delim(config) !equal(config) [_])+) { s.to_string() }
 
     rule value() -> Value
@@ -221,16 +184,16 @@ impl Value {
     }
 }
 
-pub fn deprint(
-    s: &str,
-    config: &PrintConfig,
-) -> Result<Value, peg::error::ParseError<peg::str::LineCol>> {
-    let mut items = printer::printer(s, config)?;
+impl Parser for LineParser {
+    type Err = peg::error::ParseError<peg::str::LineCol>;
+    fn parse(&self, s: &str) -> Result<Value, Self::Err> {
+        let mut items = printer::printer(s, self)?;
 
-    let mut value = Value::Null;
-    for i in items.iter_mut() {
-        value.append_item(i);
+        let mut value = Value::Null;
+        for i in items.iter_mut() {
+            value.append_item(i);
+        }
+
+        Ok(value)
     }
-
-    Ok(value)
 }

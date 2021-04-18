@@ -1,8 +1,9 @@
 //! JSON Generator
 use clap::Clap;
 use df_utils::{
+    generator::{MinJsonGenerator, PrettyJsonGenerator},
     io::{Input, Output},
-    Generator, MinJsonGenerator, PrettyJsonGenerator, PrintConfig, Value,
+    Generator, LineParser, Parser,
 };
 use std::io::Read;
 use std::path::PathBuf;
@@ -51,17 +52,15 @@ fn main() -> std::io::Result<()> {
     let mut s = String::new();
     Input::from_path(opts.input)?.read_to_string(&mut s)?;
 
-    let value = Value::parse(
-        &s,
-        PrintConfig::new()
-            .root(opts.root)
-            .delimiter(opts.delimiter)
-            .equal(opts.equal),
-    )
-    .unwrap_or_else(|e| {
-        println!("{}", e);
-        std::process::exit(1);
-    });
+    let value = LineParser::new()
+        .root(opts.root)
+        .delimiter(opts.delimiter)
+        .equal(opts.equal)
+        .parse(&s)
+        .unwrap_or_else(|e| {
+            println!("{}", e);
+            std::process::exit(1);
+        });
 
     let mut output = Output::from_path(opts.output)?;
     if opts.minify {

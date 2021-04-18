@@ -1,7 +1,9 @@
 //! Generator Implementations
+mod line;
 mod min_json;
 mod pretty_json;
 
+pub use line::LineGenerator;
 pub use min_json::MinJsonGenerator;
 pub use pretty_json::PrettyJsonGenerator;
 

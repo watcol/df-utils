@@ -1,14 +1,12 @@
 //! Simple CLI Parser for Data Formats
-mod generator;
-mod parser;
-mod print;
+pub mod generator;
+pub mod parser;
 
 #[cfg(feature = "bin")]
 pub mod io;
 
-pub use generator::{Generator, MinJsonGenerator, PrettyJsonGenerator};
-pub use parser::{Json5Parser, JsonParser, Parser};
-pub use print::PrintConfig;
+pub use generator::{Generator, LineGenerator};
+pub use parser::{LineParser, Parser};
 
 use std::collections::HashMap;
 
@@ -22,21 +20,4 @@ pub enum Value {
     String(String),
     Array(Vec<Value>),
     Map(HashMap<String, Value>),
-}
-
-impl Value {
-    pub fn print<W: std::io::Write>(
-        &self,
-        buf: &mut W,
-        config: &PrintConfig,
-    ) -> std::io::Result<()> {
-        print::print(buf, self, config)
-    }
-
-    pub fn parse(
-        s: &str,
-        config: &PrintConfig,
-    ) -> Result<Self, peg::error::ParseError<peg::str::LineCol>> {
-        print::deprint(s, config)
-    }
 }

@@ -1,9 +1,11 @@
 //! Parser Implementations
 mod json;
 mod json5;
+mod line;
 
 pub use json::JsonParser;
 pub use json5::Json5Parser;
+pub use line::LineParser;
 
 use crate::Value;
 
