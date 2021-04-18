@@ -1,6 +1,6 @@
 //! Line Generator
 
-use crate::{Value, Generator};
+use crate::{Generator, Value};
 use std::io;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -46,7 +46,6 @@ impl Generator for LineGenerator {
         inner(buf, value, self, &self.root)
     }
 }
-
 
 fn inner<W: io::Write>(
     buf: &mut W,

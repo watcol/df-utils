@@ -1,6 +1,6 @@
 //! Line Parser
 
-use crate::{Value, Parser};
+use crate::{Parser, Value};
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq, Eq)]

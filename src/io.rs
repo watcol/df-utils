@@ -1,7 +1,7 @@
 //! IO Control
 use std::fs::File;
 use std::io;
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 
 /// Unified input stream
 #[derive(Debug)]
@@ -24,7 +24,7 @@ impl Input {
         match &path {
             Some(path) if path == Path::new("-") => Ok(Self::Stdin(io::stdin())),
             Some(path) => File::open(path).map(Self::File),
-            None => Ok(Self::Stdin(io::stdin()))
+            None => Ok(Self::Stdin(io::stdin())),
         }
     }
 }
@@ -57,7 +57,7 @@ impl Output {
         match &path {
             Some(path) if path == Path::new("-") => Ok(Self::Stdout(io::stdout())),
             Some(path) => File::create(path).map(Self::File),
-            None => Ok(Self::Stdout(io::stdout()))
+            None => Ok(Self::Stdout(io::stdout())),
         }
     }
 }

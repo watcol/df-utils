@@ -30,7 +30,12 @@ impl Generator for PrettyJsonGenerator {
     }
 }
 
-fn inner_generate<W: Write>(buf: &mut W, value: &Value, ind_size: usize, ind: usize) -> io::Result<()> {
+fn inner_generate<W: Write>(
+    buf: &mut W,
+    value: &Value,
+    ind_size: usize,
+    ind: usize,
+) -> io::Result<()> {
     match value {
         Value::Null => write!(buf, "null")?,
         Value::Boolean(b) => write!(buf, "{}", b)?,
