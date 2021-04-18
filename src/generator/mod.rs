@@ -1,7 +1,9 @@
 //! Generator Implementations
 mod min_json;
+mod pretty_json;
 
 pub use min_json::MinJsonGenerator;
+pub use pretty_json::PrettyJsonGenerator;
 
 use crate::Value;
 use std::io;

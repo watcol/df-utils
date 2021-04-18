@@ -1,5 +1,5 @@
 //! JSON Generator
-use df_utils::{Value, PrintConfig, Generator, MinJsonGenerator};
+use df_utils::{Value, PrintConfig, Generator, PrettyJsonGenerator};
 use std::io::{Read, stdin, stdout};
 
 fn main() {
@@ -9,5 +9,5 @@ fn main() {
         println!("{}", e);
         std::process::exit(1);
     });
-    MinJsonGenerator::generate(&mut stdout(), &value).expect("Failed to write");
+    PrettyJsonGenerator::generate(&mut stdout(), &value).expect("Failed to write");
 }
