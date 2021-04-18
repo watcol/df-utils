@@ -16,6 +16,23 @@ include = [
   "src/**/*.rs"
 ]
 
+[features]
+default = ["bin"]
+bin = ["clap"]
+
 [dependencies]
 peg = "0.7"
 unicode_categories = "0.1"
+clap = { version = "3.0.0-beta.2", optional = true }
+
+[[bin]]
+name = "jprs"
+required-features = ["bin"]
+
+[[bin]]
+name = "jgen"
+required-features = ["bin"]
+
+[[bin]]
+name = "jfmt"
+required-features = ["bin"]

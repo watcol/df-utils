@@ -3,6 +3,9 @@ mod generator;
 mod parser;
 mod print;
 
+#[cfg(feature = "bin")]
+pub mod io;
+
 pub use generator::{Generator, MinJsonGenerator, PrettyJsonGenerator};
 pub use parser::{JsonParser, Json5Parser, Parser};
 pub use print::PrintConfig;
