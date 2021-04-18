@@ -98,7 +98,7 @@ pub struct JsonParser;
 
 impl Parser for JsonParser {
     type Err = peg::error::ParseError<peg::str::LineCol>;
-    fn parse(s: &str) -> Result<Value, Self::Err> {
+    fn parse(&self, s: &str) -> Result<Value, Self::Err> {
         json_parser::json(s)
     }
 }

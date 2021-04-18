@@ -65,9 +65,9 @@ fn main() -> std::io::Result<()> {
 
     let mut output = Output::from_path(opts.output)?;
     if opts.minify {
-        MinJsonGenerator::generate(&mut output, &value)?;
+        MinJsonGenerator.generate(&mut output, &value)?;
     } else {
-        PrettyJsonGenerator::generate(&mut output, &value)?;
+        PrettyJsonGenerator.generate(&mut output, &value)?;
     }
 
     Ok(())

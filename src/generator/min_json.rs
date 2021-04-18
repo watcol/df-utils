@@ -5,7 +5,7 @@ use crate::{Generator, Value};
 use std::io::{self, Write};
 
 impl Generator for MinJsonGenerator {
-    fn generate<W: Write>(buf: &mut W, value: &Value) -> io::Result<()> {
+    fn generate<W: Write>(&self, buf: &mut W, value: &Value) -> io::Result<()> {
         inner_generate(buf, value)
     }
 }

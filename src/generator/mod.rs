@@ -10,5 +10,5 @@ use std::io;
 
 /// The unified interface for generate data format.
 pub trait Generator {
-    fn generate<W: io::Write>(buf: &mut W, value: &Value) -> io::Result<()>;
+    fn generate<W: io::Write>(&self, buf: &mut W, value: &Value) -> io::Result<()>;
 }

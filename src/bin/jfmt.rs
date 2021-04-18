@@ -31,9 +31,9 @@ fn main() -> std::io::Result<()> {
     let mut s = String::new();
     Input::from_path(opts.input)?.read_to_string(&mut s)?;
     let value = if opts.json5 {
-        Json5Parser::parse(&s)
+        Json5Parser.parse(&s)
     } else {
-        JsonParser::parse(&s)
+        JsonParser.parse(&s)
     }
     .unwrap_or_else(|e| {
         println!("{}", e);
@@ -43,9 +43,9 @@ fn main() -> std::io::Result<()> {
     let mut output = Output::from_path(opts.output)?;
 
     if opts.minify {
-        MinJsonGenerator::generate(&mut output, &value)?;
+        MinJsonGenerator.generate(&mut output, &value)?;
     } else {
-        PrettyJsonGenerator::generate(&mut output, &value)?;
+        PrettyJsonGenerator.generate(&mut output, &value)?;
     }
     Ok(())
 }

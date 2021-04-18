@@ -140,7 +140,7 @@ pub struct Json5Parser;
 
 impl Parser for Json5Parser {
     type Err = peg::error::ParseError<peg::str::LineCol>;
-    fn parse(s: &str) -> Result<Value, Self::Err> {
+    fn parse(&self, s: &str) -> Result<Value, Self::Err> {
         json5_parser::json5(s)
     }
 }

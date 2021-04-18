@@ -10,5 +10,5 @@ use crate::Value;
 /// The unified interface for parsing data format.
 pub trait Parser {
     type Err;
-    fn parse(s: &str) -> Result<Value, Self::Err>;
+    fn parse(&self, s: &str) -> Result<Value, Self::Err>;
 }
