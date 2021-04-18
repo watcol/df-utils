@@ -1,5 +1,5 @@
 //! JSON(JSON5) Parser
-use df_utils::{Value, Parser, Json5Parser, PrintConfig};
+use df_utils::{Parser, Json5Parser, PrintConfig};
 use std::io::{stdin, stdout, Read};
 
 fn main() {
