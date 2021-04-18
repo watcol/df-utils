@@ -2,14 +2,14 @@
 pub struct MinJsonGenerator;
 
 use crate::{Value, Generator};
+use std::io::{self, Write};
 
 impl Generator for MinJsonGenerator {
-    type Err = ();
-    fn generate(value: &Value) -> Result<String, Self::Err> {
-        Ok(inner_generate(value))
+    fn generate<W: Write>(buf: &mut W, value: &Value) -> io::Result<()> {
+        inner_generate(buf, value)
     }
 }
 
-fn inner_generate(value: &Value) -> String {
-    String::new()
+fn inner_generate<W: Write>(buf: &mut W, value: &Value) -> io::Result<()> {
+    Ok(())
 }
