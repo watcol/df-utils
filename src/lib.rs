@@ -1,8 +1,10 @@
 //! Simple CLI Parser for Data Formats
-mod json;
+mod generator;
+mod parser;
 mod print;
 
-pub use json::{JsonParser, Json5Parser};
+pub use generator::Generator;
+pub use parser::{JsonParser, Json5Parser, Parser};
 pub use print::PrintConfig;
 
 use std::collections::HashMap;
@@ -27,16 +29,4 @@ impl Value {
     pub fn parse(s: &str, config: &PrintConfig) -> Result<Self, peg::error::ParseError<peg::str::LineCol>> {
         print::deprint(s, config)
     }
-}
-
-/// The unified interface for parsing data format.
-pub trait Parser {
-    type Err;
-    fn parse(s: &str) -> Result<Value, Self::Err>;
-}
-
-/// The unified interface for generate data format.
-pub trait Generator {
-    type Err;
-    fn generate(value: &Value) -> Result<String, Self::Err>;
 }
