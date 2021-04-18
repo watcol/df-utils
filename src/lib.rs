@@ -23,6 +23,10 @@ impl Value {
     pub fn print<W: std::io::Write>(&self, buf: &mut W, config: &PrintConfig) -> std::io::Result<()> {
         print::print(buf, self, config)
     }
+
+    pub fn parse(s: &str, config: &PrintConfig) -> Result<Self, peg::error::ParseError<peg::str::LineCol>> {
+        print::deprint(s, config)
+    }
 }
 
 /// The unified interface for parsing data format.
