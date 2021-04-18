@@ -1,7 +1,7 @@
 //! IO Control
 use std::fs::File;
 use std::io;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 
 /// Unified input stream
 #[derive(Debug)]
@@ -21,10 +21,10 @@ impl io::Read for Input {
 
 impl Input {
     pub fn from_path(path: Option<PathBuf>) -> io::Result<Self> {
-        if let Some(path) = path {
-            File::open(path).map(Self::File)
-        } else {
-            Ok(Self::Stdin(io::stdin()))
+        match &path {
+            Some(path) if path == Path::new("-") => Ok(Self::Stdin(io::stdin())),
+            Some(path) => File::open(path).map(Self::File),
+            None => Ok(Self::Stdin(io::stdin()))
         }
     }
 }
@@ -54,10 +54,10 @@ impl io::Write for Output {
 
 impl Output {
     pub fn from_path(path: Option<PathBuf>) -> io::Result<Self> {
-        if let Some(path) = path {
-            File::create(path).map(Self::File)
-        } else {
-            Ok(Self::Stdout(io::stdout()))
+        match &path {
+            Some(path) if path == Path::new("-") => Ok(Self::Stdout(io::stdout())),
+            Some(path) => File::create(path).map(Self::File),
+            None => Ok(Self::Stdout(io::stdout()))
         }
     }
 }
