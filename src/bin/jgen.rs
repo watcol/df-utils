@@ -44,6 +44,8 @@ struct Opts {
     equal: String,
     #[clap(short = 'm', long = "minify", about = "Minify JSON output.")]
     minify: bool,
+    #[clap(short = 'i', long = "indent", about = "The indent size.", default_value = "4", conflicts_with = "minify")]
+    indent: usize,
 }
 
 fn main() -> std::io::Result<()> {
@@ -66,7 +68,7 @@ fn main() -> std::io::Result<()> {
     if opts.minify {
         MinJsonGenerator.generate(&mut output, &value)?;
     } else {
-        PrettyJsonGenerator.generate(&mut output, &value)?;
+        PrettyJsonGenerator::new().indent(opts.indent).generate(&mut output, &value)?;
     }
 
     Ok(())

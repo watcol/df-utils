@@ -1,8 +1,10 @@
 //! JSON(JSON5) Formatter
 use clap::Clap;
 use df_utils::{
+    generator::{MinJsonGenerator, PrettyJsonGenerator},
     io::{Input, Output},
-    Generator, Json5Parser, JsonParser, MinJsonGenerator, Parser, PrettyJsonGenerator,
+    parser::{Json5Parser, JsonParser},
+    Generator, Parser,
 };
 use std::io::Read;
 use std::path::PathBuf;
@@ -24,6 +26,8 @@ struct Opts {
     json5: bool,
     #[clap(short = 'm', long = "minify", about = "Minify JSON output.")]
     minify: bool,
+    #[clap(short = 'i', long = "indent", about = "The indent size.", default_value = "4", conflicts_with = "minify")]
+    indent: usize,
 }
 
 fn main() -> std::io::Result<()> {
@@ -45,7 +49,7 @@ fn main() -> std::io::Result<()> {
     if opts.minify {
         MinJsonGenerator.generate(&mut output, &value)?;
     } else {
-        PrettyJsonGenerator.generate(&mut output, &value)?;
+        PrettyJsonGenerator::new().indent(opts.indent).generate(&mut output, &value)?;
     }
     Ok(())
 }

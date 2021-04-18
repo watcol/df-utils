@@ -1,17 +1,36 @@
 /// Formatted JSON Generator.
-pub struct PrettyJsonGenerator;
+pub struct PrettyJsonGenerator {
+    indent: usize,
+}
+
+impl Default for PrettyJsonGenerator {
+    fn default() -> Self {
+        Self { indent: 4 }
+    }
+}
+
+impl PrettyJsonGenerator {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn indent(&mut self, indent: usize) -> &mut Self {
+        self.indent = indent;
+        self
+    }
+}
 
 use crate::{Generator, Value};
 use std::io::{self, Write};
 
 impl Generator for PrettyJsonGenerator {
     fn generate<W: Write>(&self, buf: &mut W, value: &Value) -> io::Result<()> {
-        inner_generate(buf, value, 1)?;
+        inner_generate(buf, value, self.indent, 1)?;
         writeln!(buf)
     }
 }
 
-fn inner_generate<W: Write>(buf: &mut W, value: &Value, ind: usize) -> io::Result<()> {
+fn inner_generate<W: Write>(buf: &mut W, value: &Value, ind_size: usize, ind: usize) -> io::Result<()> {
     match value {
         Value::Null => write!(buf, "null")?,
         Value::Boolean(b) => write!(buf, "{}", b)?,
@@ -26,10 +45,10 @@ fn inner_generate<W: Write>(buf: &mut W, value: &Value, ind: usize) -> io::Resul
                 if i != 0 {
                     writeln!(buf, ",")?;
                 }
-                write!(buf, "{}", "    ".repeat(ind))?;
-                inner_generate(buf, v, ind + 1)?;
+                write!(buf, "{}", " ".repeat(ind_size * ind))?;
+                inner_generate(buf, v, ind_size, ind + 1)?;
             }
-            write!(buf, "\n{}]", "    ".repeat(ind - 1))?;
+            write!(buf, "\n{}]", " ".repeat(ind_size * (ind - 1)))?;
         }
         Value::Map(m) => {
             writeln!(buf, "{{")?;
@@ -37,12 +56,12 @@ fn inner_generate<W: Write>(buf: &mut W, value: &Value, ind: usize) -> io::Resul
                 if i != 0 {
                     writeln!(buf, ",")?;
                 }
-                write!(buf, "{}", "    ".repeat(ind))?;
+                write!(buf, "{}", " ".repeat(ind_size * ind))?;
                 string(buf, k)?;
                 write!(buf, ": ")?;
-                inner_generate(buf, v, ind + 1)?;
+                inner_generate(buf, v, ind_size, ind + 1)?;
             }
-            write!(buf, "\n{}}}", "    ".repeat(ind - 1))?;
+            write!(buf, "\n{}}}", " ".repeat(ind_size * (ind - 1)))?;
         }
     }
     Ok(())
