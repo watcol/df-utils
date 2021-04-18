@@ -1,4 +1,7 @@
 //! Generator Implementations
+mod min_json;
+
+pub use min_json::MinJsonGenerator;
 
 use crate::Value;
 

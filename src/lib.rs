@@ -3,7 +3,7 @@ mod generator;
 mod parser;
 mod print;
 
-pub use generator::Generator;
+pub use generator::{Generator, MinJsonGenerator};
 pub use parser::{JsonParser, Json5Parser, Parser};
 pub use print::PrintConfig;
 
