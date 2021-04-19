@@ -5,8 +5,8 @@ pub mod parser;
 #[cfg(feature = "bin")]
 pub mod io;
 
-pub use generator::{Generator, LineGenerator};
-pub use parser::{LineParser, Parser};
+pub use generator::Generator;
+pub use parser::Parser;
 
 use std::collections::HashMap;
 

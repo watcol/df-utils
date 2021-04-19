@@ -1,10 +1,6 @@
 //! JSON(JSON5) Parser
 use clap::Clap;
-use df_utils::{
-    io::{Input, Output},
-    parser::{Json5Parser, JsonParser},
-    Generator, LineGenerator, Parser,
-};
+use df_utils::*;
 use std::io::Read;
 use std::path::PathBuf;
 
@@ -50,21 +46,21 @@ fn main() -> std::io::Result<()> {
     let opts = Opts::parse();
 
     let mut s = String::new();
-    Input::from_path(opts.input)?.read_to_string(&mut s)?;
+    io::Input::from_path(opts.input)?.read_to_string(&mut s)?;
 
     let value = if opts.json5 {
-        Json5Parser.parse(&s)
+        parser::Json5Parser.parse(&s)
     } else {
-        JsonParser.parse(&s)
+        parser::JsonParser.parse(&s)
     }
     .unwrap_or_else(|e| {
         println!("{}", e);
         std::process::exit(1);
     });
 
-    LineGenerator::new()
+    generator::LineGenerator::new()
         .root(opts.root)
         .delimiter(opts.delimiter)
         .equal(opts.equal)
-        .generate(&mut Output::from_path(opts.output)?, &value)
+        .generate(&mut io::Output::from_path(opts.output)?, &value)
 }

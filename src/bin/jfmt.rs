@@ -1,11 +1,6 @@
 //! JSON(JSON5) Formatter
 use clap::Clap;
-use df_utils::{
-    generator::{MinJsonGenerator, PrettyJsonGenerator},
-    io::{Input, Output},
-    parser::{Json5Parser, JsonParser},
-    Generator, Parser,
-};
+use df_utils::*;
 use std::io::Read;
 use std::path::PathBuf;
 
@@ -39,23 +34,23 @@ struct Opts {
 fn main() -> std::io::Result<()> {
     let opts = Opts::parse();
     let mut s = String::new();
-    Input::from_path(opts.input)?.read_to_string(&mut s)?;
+    io::Input::from_path(opts.input)?.read_to_string(&mut s)?;
     let value = if opts.json5 {
-        Json5Parser.parse(&s)
+        parser::Json5Parser.parse(&s)
     } else {
-        JsonParser.parse(&s)
+        parser::JsonParser.parse(&s)
     }
     .unwrap_or_else(|e| {
         println!("{}", e);
         std::process::exit(1);
     });
 
-    let mut output = Output::from_path(opts.output)?;
+    let mut output = io::Output::from_path(opts.output)?;
 
     if opts.minify {
-        MinJsonGenerator.generate(&mut output, &value)?;
+        generator::MinJsonGenerator.generate(&mut output, &value)?;
     } else {
-        PrettyJsonGenerator::new()
+        generator::PrettyJsonGenerator::new()
             .indent(opts.indent)
             .generate(&mut output, &value)?;
     }
