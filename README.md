@@ -8,8 +8,29 @@
 Simple CLI Parser for Data Formats
 
 ## Installation
-```shell
-$ cargo install df-utils
+Requires `cargo`
+### Stable Version *(coming soon..)*
+### Development Version
+```
+$ cargo install --git https://github.com/watcol/df-utils --branch main
+```
+
+## Usage
+### As command line utilities
+This repository contains these commands.
+
+- `jprs` (JSON Parser)
+- `jgen` (JSON Generator)
+- `jfmt` (JSON Formatter)
+
+Type `<cmd> -h` to see help for each command.
+
+### As a Rust crate
+Add this to your `Cargo.toml`:
+```
+[dependencies]
+df-utils = { version = "comming soon...", default-features = false } # Stable Version
+df-utils = { git = "https://github.com/watcol/df-utils", branch = "main", default-features = false } # Development Version
 ```
 
 ## Author
