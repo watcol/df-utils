@@ -43,14 +43,11 @@ fn main() -> std::io::Result<()> {
         std::process::exit(1);
     });
 
-    let mut output = io::Output::from_path(opts.output)?;
-
     if opts.minify {
-        generator::MinJsonGenerator.generate(&mut output, &value)?;
+        generator::MinJsonGenerator.write_path(opts.output, &value)
     } else {
         generator::PrettyJsonGenerator::new()
             .indent(opts.indent)
-            .generate(&mut output, &value)?;
+            .write_path(opts.output, &value)
     }
-    Ok(())
 }

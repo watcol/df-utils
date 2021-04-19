@@ -45,9 +45,9 @@ fn main() -> std::io::Result<()> {
     let opts = Opts::parse();
 
     let value = if opts.json5 {
-        parser::Json5Parser.read_from(&mut io::Input::from_path(opts.input)?)
+        parser::Json5Parser.read_path(opts.input)
     } else {
-        parser::JsonParser.read_from(&mut io::Input::from_path(opts.input)?)
+        parser::JsonParser.read_path(opts.input)
     }
     .unwrap_or_else(|e| {
         println!("{}", e);
@@ -58,5 +58,5 @@ fn main() -> std::io::Result<()> {
         .root(opts.root)
         .delimiter(opts.delimiter)
         .equal(opts.equal)
-        .generate(&mut io::Output::from_path(opts.output)?, &value)
+        .write_path(opts.output, &value)
 }

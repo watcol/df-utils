@@ -56,20 +56,17 @@ fn main() -> std::io::Result<()> {
         .root(opts.root)
         .delimiter(opts.delimiter)
         .equal(opts.equal)
-        .read_from(&mut io::Input::from_path(opts.input)?)
+        .read_path(opts.input)
         .unwrap_or_else(|e| {
             println!("{}", e);
             std::process::exit(1);
         });
 
-    let mut output = io::Output::from_path(opts.output)?;
     if opts.minify {
-        generator::MinJsonGenerator.generate(&mut output, &value)?;
+        generator::MinJsonGenerator.write_path(opts.output, &value)
     } else {
         generator::PrettyJsonGenerator::new()
             .indent(opts.indent)
-            .generate(&mut output, &value)?;
+            .write_path(opts.output, &value)
     }
-
-    Ok(())
 }

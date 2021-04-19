@@ -11,6 +11,7 @@ use crate::Value;
 use std::io;
 use std::fmt;
 use std::error::Error;
+use std::path::Path;
 
 /// The error type for "read_from" function.
 #[derive(Debug)]
@@ -45,5 +46,10 @@ pub trait Parser {
         let mut s = String::new();
         buf.read_to_string(&mut s)?;
         self.parse(&s).map_err(CombinedError::Parse)
+    }
+
+    #[cfg(feature = "bin")]
+    fn read_path<P: AsRef<Path>>(&self, path: Option<P>) -> Result<Value, CombinedError<Self::Err>> {
+        self.read_from(&mut crate::io::Input::from_path(path)?)
     }
 }
