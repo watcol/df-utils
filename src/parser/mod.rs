@@ -8,16 +8,16 @@ pub use json5::Json5Parser;
 pub use line::LineParser;
 
 use crate::Value;
-use std::io;
-use std::fmt;
 use std::error::Error;
+use std::fmt;
+use std::io;
 use std::path::Path;
 
 /// The error type for "read_from" function.
 #[derive(Debug)]
 pub enum CombinedError<E> {
     Io(io::Error),
-    Parse(E)
+    Parse(E),
 }
 
 impl<E: Error> Error for CombinedError<E> {}
@@ -49,7 +49,10 @@ pub trait Parser {
     }
 
     #[cfg(feature = "bin")]
-    fn read_path<P: AsRef<Path>>(&self, path: Option<P>) -> Result<Value, CombinedError<Self::Err>> {
+    fn read_path<P: AsRef<Path>>(
+        &self,
+        path: Option<P>,
+    ) -> Result<Value, CombinedError<Self::Err>> {
         self.read_from(&mut crate::io::Input::from_path(path)?)
     }
 }
