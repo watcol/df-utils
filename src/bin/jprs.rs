@@ -1,7 +1,6 @@
 //! JSON(JSON5) Parser
 use clap::Clap;
 use df_utils::*;
-use std::io::Read;
 use std::path::PathBuf;
 
 /// Options
@@ -45,13 +44,10 @@ struct Opts {
 fn main() -> std::io::Result<()> {
     let opts = Opts::parse();
 
-    let mut s = String::new();
-    io::Input::from_path(opts.input)?.read_to_string(&mut s)?;
-
     let value = if opts.json5 {
-        parser::Json5Parser.parse(&s)
+        parser::Json5Parser.read_from(&mut io::Input::from_path(opts.input)?)
     } else {
-        parser::JsonParser.parse(&s)
+        parser::JsonParser.read_from(&mut io::Input::from_path(opts.input)?)
     }
     .unwrap_or_else(|e| {
         println!("{}", e);

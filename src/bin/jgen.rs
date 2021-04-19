@@ -1,7 +1,6 @@
 //! JSON Generator
 use clap::Clap;
 use df_utils::*;
-use std::io::Read;
 use std::path::PathBuf;
 
 /// Options
@@ -53,14 +52,11 @@ struct Opts {
 fn main() -> std::io::Result<()> {
     let opts = Opts::parse();
 
-    let mut s = String::new();
-    io::Input::from_path(opts.input)?.read_to_string(&mut s)?;
-
     let value = parser::LineParser::new()
         .root(opts.root)
         .delimiter(opts.delimiter)
         .equal(opts.equal)
-        .parse(&s)
+        .read_from(&mut io::Input::from_path(opts.input)?)
         .unwrap_or_else(|e| {
             println!("{}", e);
             std::process::exit(1);
