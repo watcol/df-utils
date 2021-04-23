@@ -3,9 +3,9 @@ use std::fmt;
 /// A struct represents date/time in TOML
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct DateTime {
-    date: Option<Date>,
-    time: Option<Time>,
-    offset: Option<Offset>,
+    pub(crate) date: Option<Date>,
+    pub(crate) time: Option<Time>,
+    pub(crate) offset: Option<Offset>,
 }
 
 impl fmt::Display for DateTime {
@@ -30,10 +30,10 @@ impl fmt::Display for DateTime {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-struct Date {
-    year: u16,
-    month: u8,
-    day: u8
+pub(crate) struct Date {
+    pub(crate) year: u16,
+    pub(crate) month: u8,
+    pub(crate) day: u8
 }
 
 impl fmt::Display for Date {
@@ -43,11 +43,11 @@ impl fmt::Display for Date {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-struct Time {
-    hour: u8,
-    minute: u8,
-    second: u8,
-    nanosecond: u32,
+pub(crate) struct Time {
+    pub(crate) hour: u8,
+    pub(crate) minute: u8,
+    pub(crate) second: u8,
+    pub(crate) nanosecond: u32,
 }
 
 impl fmt::Display for Time {
@@ -63,9 +63,9 @@ impl fmt::Display for Time {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-struct Offset {
-    hour: i8,
-    minute: u8
+pub(crate) struct Offset {
+    pub(crate) hour: i8,
+    pub(crate) minute: u8
 }
 
 impl fmt::Display for Offset {
