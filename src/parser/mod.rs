@@ -2,10 +2,12 @@
 mod json;
 mod json5;
 mod line;
+mod toml;
 
 pub use json::JsonParser;
 pub use json5::Json5Parser;
 pub use line::LineParser;
+pub use toml::TomlParser;
 
 use crate::Value;
 use std::error::Error;
