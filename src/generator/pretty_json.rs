@@ -44,6 +44,7 @@ fn inner_generate<W: Write>(
         Value::Float(f) if *f == f64::NEG_INFINITY => write!(buf, "-Infinity")?,
         Value::Float(f) => write!(buf, "{}", f)?,
         Value::String(s) => string(buf, s)?,
+        Value::DateTime(d) => write!(buf, "\"{}\"", d)?,
         Value::Array(vs) => {
             writeln!(buf, "[")?;
             for (i, v) in vs.iter().enumerate() {

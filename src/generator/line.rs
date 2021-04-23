@@ -59,6 +59,7 @@ fn inner<W: io::Write>(
         Value::Int(i) => writeln!(buf, "{}{}{}", loc, config.equal, i)?,
         Value::Float(f) => writeln!(buf, "{}{}{}", loc, config.equal, f)?,
         Value::String(s) => writeln!(buf, "{}{}{:?}", loc, config.equal, s)?,
+        Value::DateTime(d) => writeln!(buf, "{}{}{}", loc, config.equal, d)?,
         Value::Array(vs) if vs.is_empty() => writeln!(buf, "{}{}[]", loc, config.equal)?,
         Value::Array(vs) => {
             for (i, v) in vs.iter().enumerate() {
