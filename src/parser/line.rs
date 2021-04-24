@@ -1,6 +1,7 @@
 //! Line Parser
 
 use crate::{Parser, Value};
+use crate::datetime::*;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -89,16 +90,17 @@ peg::parser! {grammar printer() for str {
         = s:$((!delim(config) !equal(config) [_])+) { s.to_string() }
 
     rule value() -> Value
-        = "null"     { Value::Null }
-        / "true"     { Value::Boolean(true) }
-        / "false"    { Value::Boolean(false) }
-        / "NaN"      { Value::Float(f64::NAN) }
-        / "inf"      { Value::Float(f64::INFINITY) }
-        / "-inf"     { Value::Float(f64::NEG_INFINITY) }
-        / "[]"       { Value::Array(Vec::new()) }
-        / "{}"       { Value::Map(HashMap::new()) }
-        / n:number() { n }
-        / s:string() { Value::String(s) }
+        = "null"       { Value::Null }
+        / "true"       { Value::Boolean(true) }
+        / "false"      { Value::Boolean(false) }
+        / "NaN"        { Value::Float(f64::NAN) }
+        / "inf"        { Value::Float(f64::INFINITY) }
+        / "-inf"       { Value::Float(f64::NEG_INFINITY) }
+        / "[]"         { Value::Array(Vec::new()) }
+        / "{}"         { Value::Map(HashMap::new()) }
+        / d:datetime() { Value::DateTime(d) }
+        / n:number()   { n }
+        / s:string()   { Value::String(s) }
 
     rule string() -> String
         = "\"" c:ch()* "\"" { String::from_iter(c) }
@@ -141,6 +143,41 @@ peg::parser! {grammar printer() for str {
 
     rule fraction() -> &'input str
         = $("." ['0'..='9']+)
+
+    rule datetime() -> DateTime
+        = d:date() t:(("T" / " ") t:time() { t })? o:offset()? {
+            DateTime { date: Some(d), time: t, offset: o }
+        }
+        / t:time() { DateTime { date: None, time: Some(t), offset: None } }
+
+    rule date() -> Date
+        = y:digits4() "-" m:digits2() "-" d:digits2() { Date { year: y, month: m, day: d } }
+
+    rule time() -> Time
+        = h:digits2() ":" m:digits2() ":" s:digits2() f:time_fraction()? {
+            Time { hour: h, minute: m, second: s, nanosecond: f.unwrap_or(0) }
+        }
+
+    rule offset() -> Offset
+        = "Z" { Offset { hour: 0, minute: 0 } }
+        / s:sign() h:digits2() ":" m:digits2() {
+            Offset { hour: s * (h as i8), minute: m }
+        }
+
+    rule sign() -> i8
+        = "+" {  1 }
+        / "-" { -1 }
+
+    rule digits4() -> u16
+        = y:$(['0'..='9']*<4>) {? y.parse().or(Err("year")) }
+
+    rule digits2() -> u8
+        = m:$(['0'..='9']*<2>) {? m.parse().or(Err("month")) }
+
+    rule time_fraction() -> u32
+        = "." f:$(['0'..='9']*<1,9>) {?
+            format!("{:0<9}", f).parse().or(Err("time_fraction"))
+        }
 }}
 
 impl Value {
