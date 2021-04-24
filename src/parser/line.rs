@@ -145,23 +145,23 @@ peg::parser! {grammar printer() for str {
         = $("." ['0'..='9']+)
 
     rule datetime() -> DateTime
-        = d:date() t:(("T" / " ") t:time() { t })? o:offset()? {
-            DateTime { date: Some(d), time: t, offset: o }
+        = d:date() t:(("T" / " ") t:time() { t })? o:offset()? {?
+            DateTime::new(Some(d), t, o).or(Err("datetime"))
         }
-        / t:time() { DateTime { date: None, time: Some(t), offset: None } }
+        / t:time() {? DateTime::new(None, Some(t), None).or(Err("datetime")) }
 
     rule date() -> Date
-        = y:digits4() "-" m:digits2() "-" d:digits2() { Date { year: y, month: m, day: d } }
+        = y:digits4() "-" m:digits2() "-" d:digits2() {? Date::new(y, m, d).or(Err("date")) }
 
     rule time() -> Time
-        = h:digits2() ":" m:digits2() ":" s:digits2() f:time_fraction()? {
-            Time { hour: h, minute: m, second: s, nanosecond: f.unwrap_or(0) }
+        = h:digits2() ":" m:digits2() ":" s:digits2() f:time_fraction()? {?
+            Time::new(h, m, s, f.unwrap_or(0)).or(Err("time"))
         }
 
     rule offset() -> Offset
-        = "Z" { Offset { hour: 0, minute: 0 } }
-        / s:sign() h:digits2() ":" m:digits2() {
-            Offset { hour: s * (h as i8), minute: m }
+        = "Z" {? Offset::new(0, 0).or(Err("offset")) }
+        / s:sign() h:digits2() ":" m:digits2() {?
+            Offset::new(s * (h as i8), m).or(Err("offset"))
         }
 
     rule sign() -> i8
